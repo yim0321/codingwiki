@@ -20,7 +20,7 @@ public class UserService {
 
         repository.save(user);
 
-
+        System.out.println(user.getId());
         return 0;
     }
 
