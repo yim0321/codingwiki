@@ -1,7 +1,8 @@
 package com.aso.codingwiki.security.filter.jwt;
 
 
-import com.aso.codingwiki.model.security.JwtAuthenticateModel;
+
+import com.aso.codingwiki.model.entity.user.UserEntity;
 import com.aso.codingwiki.security.auth.PrincipalDetails;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -32,10 +33,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             throws AuthenticationException {
 
         // request에 있는 username과 password를 파싱해서 자바 Object로 받기
-
         try {
             ObjectMapper om = new ObjectMapper();
-            JwtAuthenticateModel user = om.readValue(request.getInputStream(), JwtAuthenticateModel.class);
+            UserEntity user = om.readValue(request.getInputStream(), UserEntity.class);
+
             // 유저네임패스워드 토큰 생성
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(user.getUserEmail(), user.getUserPw());

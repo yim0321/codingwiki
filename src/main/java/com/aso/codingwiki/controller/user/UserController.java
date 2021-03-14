@@ -35,10 +35,6 @@ public class UserController {
     @PutMapping("/user")
     public long updUser(@RequestBody  UpdUserRequest updUserRequest){
 
-        System.out.println("usderID"+updUserRequest.getId());
-        System.out.println("usderID"+updUserRequest.getOldPw());
-        System.out.println("usderID"+updUserRequest.getNewPw());
-
         return service.UpdUser(updUserRequest);
 
     }

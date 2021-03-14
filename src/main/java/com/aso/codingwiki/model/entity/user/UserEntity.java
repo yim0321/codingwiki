@@ -22,7 +22,6 @@ public class UserEntity extends CommonDateTime {
 
     private String userEmail;//유저 아이디
 
-    @JsonIgnore
     private String userPw;
 
     @Enumerated(EnumType.STRING)

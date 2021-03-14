@@ -1,18 +1,20 @@
 package com.aso.codingwiki.model.entity.user;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.validation.constraints.NotEmpty;
 
 @Getter
-@RequiredArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UpdUserRequest {
 
 
-    private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+
 
     @NotEmpty
     private long id;
@@ -23,12 +25,5 @@ public class UpdUserRequest {
     @NotEmpty
     private String  newPw;
 
-
-    public void changePw(UserEntity entity){
-        if(passwordEncoder.matches(oldPw,entity.getUserPw())){
-            entity.setUserPw(passwordEncoder.encode(newPw));
-        }
-        
-    }
 
 }

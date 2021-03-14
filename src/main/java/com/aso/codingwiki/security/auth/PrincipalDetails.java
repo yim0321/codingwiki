@@ -14,7 +14,6 @@ public class PrincipalDetails implements UserDetails {
     private UserEntity user;
 
     public PrincipalDetails(UserEntity user) {
-
         this.user=user;
     }
 
