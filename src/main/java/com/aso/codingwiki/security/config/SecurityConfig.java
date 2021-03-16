@@ -3,7 +3,6 @@ package com.aso.codingwiki.security.config;
 import com.aso.codingwiki.repository.UserRepository;
 import com.aso.codingwiki.security.filter.jwt.JwtAuthenticationFilter;
 import com.aso.codingwiki.security.filter.jwt.JwtAuthorizationFilter;
-import com.aso.codingwiki.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

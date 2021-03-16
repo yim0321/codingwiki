@@ -1,5 +1,6 @@
-package com.aso.codingwiki.model.entity.user;
+package com.aso.codingwiki.model.user.request;
 
+import com.aso.codingwiki.model.user.UserEntity;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -21,4 +22,13 @@ public class InsUserRequest {
     public void passwordEncoder(PasswordEncoder passwordEncoder){
         this.userPw = passwordEncoder.encode(this.getUserPw());
     }
+
+    public UserEntity builderEntity(){
+
+        return UserEntity.builder()
+                .userEmail(this.userEmail)
+                .userPw(this.userPw)
+                .build();
+    }
+
 }

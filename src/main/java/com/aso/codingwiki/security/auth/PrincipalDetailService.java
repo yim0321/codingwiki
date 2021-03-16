@@ -1,7 +1,7 @@
 package com.aso.codingwiki.security.auth;
 
 
-import com.aso.codingwiki.model.entity.user.UserEntity;
+import com.aso.codingwiki.model.user.UserEntity;
 import com.aso.codingwiki.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

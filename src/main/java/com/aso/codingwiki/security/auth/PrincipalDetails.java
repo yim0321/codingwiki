@@ -1,6 +1,6 @@
 package com.aso.codingwiki.security.auth;
 
-import com.aso.codingwiki.model.entity.user.UserEntity;
+import com.aso.codingwiki.model.user.UserEntity;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

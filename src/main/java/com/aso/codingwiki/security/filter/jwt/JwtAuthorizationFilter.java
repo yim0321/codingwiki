@@ -1,6 +1,6 @@
 package com.aso.codingwiki.security.filter.jwt;
 
-import com.aso.codingwiki.model.entity.user.UserEntity;
+import com.aso.codingwiki.model.user.UserEntity;
 import com.aso.codingwiki.repository.UserRepository;
 import com.aso.codingwiki.security.auth.PrincipalDetails;
 import com.auth0.jwt.JWT;
