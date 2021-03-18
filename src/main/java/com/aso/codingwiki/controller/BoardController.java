@@ -1,14 +1,25 @@
 package com.aso.codingwiki.controller;
 
-import com.aso.codingwiki.model.board.BoardEntity;
-import com.aso.codingwiki.model.category.CategoryEntity;
-import com.aso.codingwiki.service.BoardService;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
 
+import com.aso.codingwiki.model.board.BoardEntity;
+import com.aso.codingwiki.service.BoardService;
+import com.google.gson.JsonObject;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -16,6 +27,7 @@ import java.util.stream.Collectors;
 public class BoardController {
 
     private final BoardService service;
+
 
     /**
      * create
@@ -33,6 +45,25 @@ public class BoardController {
     }
 
     /**
+     * 시큐리티에서 유저값 가져오도록 변경
+     */
+    //이미지 업로드 과정
+    @PostMapping("/img/{uuid}")
+    public void insImg(HttpServletRequest request,
+                       HttpServletResponse response,
+                       MultipartHttpServletRequest multiFile,
+                       @PathVariable(name = "uuid") long uuid) throws Exception{
+
+
+        service.imgIns(request,response,multiFile,uuid);
+
+
+
+        
+        
+
+    }
+    /**
      * read
      */
 
@@ -47,8 +78,15 @@ public class BoardController {
 
     /**
      * update
+     *
+     * PUT 일부 업데이트
+     * PATCH 모두 업데이트
      */
 
+    @PatchMapping("/board/{boardId}")
+    public long updBoard(@PathVariable(name = "boardId") long boardId){
+        return service.updBoard(boardId);
+    }
 
 
 
@@ -56,12 +94,19 @@ public class BoardController {
      * delete
      */
 
+    @DeleteMapping("/board/{boardId}")
+    public long delBoard(@PathVariable(name = "boardId") long boardId){
+
+        return service.delBoard(boardId);
+    }
 
 
 
     /**
      * inner class
      */
+    @Getter
+    @NoArgsConstructor
     static class InsBoardRequest{
 
         private long categoryId;//카테고리 id
@@ -70,6 +115,8 @@ public class BoardController {
         private String boardContents;
 
     }
+    @Getter
+    @NoArgsConstructor
     static class SelBoardResponse{
 
         private String boardTitle;//글제몪
@@ -85,4 +132,6 @@ public class BoardController {
             this.views = boardEntity.getViews();
         }
     }
+
+
 }
