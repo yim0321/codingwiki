@@ -19,6 +19,17 @@ public class ImgEntity extends DateTime {
     @Column(name = "img_id")
     private long id;
 
-    private String uuid;
+    private String url;
     private boolean imgBool;
+    private String uuid;
+
+    public ImgEntity(String url,String uuid){
+        this.url = url;
+        this.imgBool = false;
+        this.uuid = uuid;
+    }
+
+    public void setImgBool(boolean imgBool) {
+        this.imgBool = imgBool;
+    }
 }

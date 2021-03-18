@@ -21,7 +21,9 @@ public class CategoryController {
     @PostMapping("/category")
     public long insCategory(@RequestBody InsCategoryRequest insCategoryRequest){
 
-        return service.insCategory(insCategoryRequest.getCategory());
+        System.out.println(insCategoryRequest.getLanguageID());
+        System.out.println(insCategoryRequest.getCategory());
+        return service.insCategory(insCategoryRequest.getCategory(),insCategoryRequest.getLanguageID());
     }
     /**
      * read
@@ -70,6 +72,7 @@ public class CategoryController {
     static class InsCategoryRequest{
 
         private String category;
+        private long languageID;
     }
     /**
      * innerclass Response

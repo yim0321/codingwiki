@@ -27,11 +27,17 @@ public class BoardEntity extends DateTime {
     private String boardContents;//글내용
     private float sumStarPoint;//별점
     private long views;//조회수
+    private String uuid;//이미지 uuid
+    /**
+     * 콜렉션으로 변경할것
+     */
+
 
     @Builder
-    public BoardEntity(String boardTitle,String boardContents){
+    public BoardEntity(String boardTitle,String boardContents,String uuid){
         this.boardTitle = boardTitle;
         this.boardContents = boardContents;
+        this.uuid = uuid;
     }
 
 

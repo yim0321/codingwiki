@@ -1,9 +1,12 @@
 package com.aso.codingwiki.service;
 
 import com.aso.codingwiki.model.board.BoardEntity;
+import com.aso.codingwiki.model.board.ImgEntity;
+import com.aso.codingwiki.model.board.ImgResopnse;
 import com.aso.codingwiki.model.category.CategoryEntity;
 import com.aso.codingwiki.repository.BoardRepository;
 import com.aso.codingwiki.repository.CategoryRepository;
+import com.aso.codingwiki.repository.ImgRepository;
 import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -30,13 +33,23 @@ public class BoardService {
 
     private final BoardRepository repository;
     private final CategoryRepository categoryRepository;
+    private final ImgRepository imgRepository;
 
-    public long insBoard(BoardEntity boardEntity,long categoryId) {
+
+    public long insBoard(BoardEntity boardEntity,long categoryId,String uuid) {
+
+
 
         Optional<CategoryEntity> categoryEntity_ = categoryRepository.findById(categoryId);
         if(categoryEntity_.isPresent()){
             boardEntity.setCategoryEntity(categoryEntity_.get());
             repository.save(boardEntity);
+
+            Optional<ImgEntity>imgEntity_ = imgRepository.findByUuid(uuid);
+            if(imgEntity_.isPresent()){
+                imgEntity_.get().setImgBool(true);
+            }
+
             return boardEntity.getId();
         }
         return 0;
@@ -73,10 +86,10 @@ public class BoardService {
         return 0;
     }
 
-    public long imgIns(HttpServletRequest request,
+    public ImgResopnse imgIns(HttpServletRequest request,
                        HttpServletResponse response,
                        MultipartHttpServletRequest multiFile,
-                       long uuid) {
+                       String uuid) {
 
         JsonObject json = new JsonObject();
         PrintWriter printWriter = null;
@@ -89,12 +102,12 @@ public class BoardService {
                     try {
                         String fileName = file.getName();
                         byte[] bytes = file.getBytes();
-                        String uploadPathDir = request.getServletContext().getRealPath("/img/"+uuid);//저장할 경로 만들기
+                        String uploadPathDir = request.getServletContext().getRealPath("/img");//저장할 경로 만들기
                         File uploadDir = new File(uploadPathDir);
                         if(!uploadDir.exists()){//폴더 체크및 생성
                             uploadDir.mkdirs();//복수형태로 하위 디렉토리까지 같이 만듬
                         }
-                        fileName = UUID.randomUUID().toString();
+                        fileName = uuid;
                         /**
                          * StringBuffer 로 고치기
                          */
@@ -104,21 +117,16 @@ public class BoardService {
                         outputStream.write(bytes);
 
                         printWriter = response.getWriter();
-                        response.setContentType("text/html");
-                        String fileUrl = "http://localhost:8090" + "/img/" + uuid + "/" + fileName;
-                        System.out.println(fileUrl);
+                        String fileUrl = "http://localhost:8090" + "/img/" + fileName;
 
-
-
+                        ImgEntity imgEntity = new ImgEntity(fileUrl,uuid);
+                        imgRepository.save(imgEntity);
 
                         json.addProperty("uploaded",1);
                         json.addProperty("fileName",fileName);
                         json.addProperty("url",fileUrl);
 
                         printWriter.println(json);
-
-
-
                     }
                     catch (Exception e){
 
@@ -127,6 +135,6 @@ public class BoardService {
             }
         }
 
-
+        return null;
     }
 }

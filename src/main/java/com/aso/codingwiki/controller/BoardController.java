@@ -2,6 +2,7 @@ package com.aso.codingwiki.controller;
 
 
 import com.aso.codingwiki.model.board.BoardEntity;
+import com.aso.codingwiki.model.board.ImgResopnse;
 import com.aso.codingwiki.service.BoardService;
 import com.google.gson.JsonObject;
 import lombok.Getter;
@@ -19,6 +20,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -33,34 +35,30 @@ public class BoardController {
      * create
      */
     @PostMapping("/board")
-    public long insBoard(InsBoardRequest insBoardRequest){
+    public long insBoard(@RequestBody InsBoardRequest insBoardRequest){
 
         BoardEntity boardEntity =
                 BoardEntity.builder()
                         .boardTitle(insBoardRequest.boardTitle)
                         .boardContents(insBoardRequest.boardContents)
+                        .uuid(insBoardRequest.uuid)
                         .build();
 
-        return service.insBoard(boardEntity,insBoardRequest.categoryId);
+        return service.insBoard(boardEntity,insBoardRequest.categoryId,insBoardRequest.uuid);
     }
 
     /**
      * 시큐리티에서 유저값 가져오도록 변경
      */
     //이미지 업로드 과정
-    @PostMapping("/img/{uuid}")
-    public void insImg(HttpServletRequest request,
-                       HttpServletResponse response,
-                       MultipartHttpServletRequest multiFile,
-                       @PathVariable(name = "uuid") long uuid) throws Exception{
+    @PostMapping("/img")
+    public void insImg(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            MultipartHttpServletRequest multiFile) throws Exception{
 
-
+        String uuid = request.getParameter("uuid");
         service.imgIns(request,response,multiFile,uuid);
-
-
-
-        
-        
 
     }
     /**
@@ -113,6 +111,7 @@ public class BoardController {
 
         private String boardTitle;
         private String boardContents;
+        private String uuid;
 
     }
     @Getter

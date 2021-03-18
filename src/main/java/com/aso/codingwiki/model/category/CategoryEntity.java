@@ -1,7 +1,9 @@
 package com.aso.codingwiki.model.category;
 
 import com.aso.codingwiki.model.language.LanguageEntity;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -11,6 +13,7 @@ import javax.persistence.*;
         name = "category_seq",
         initialValue = 1,
         allocationSize = 1)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CategoryEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -24,7 +27,9 @@ public class CategoryEntity {
     @JoinColumn(name = "language_id")
     private LanguageEntity languageEntity;
 
-    public CategoryEntity(String category) {
+    public CategoryEntity(String category,LanguageEntity languageEntity) {
+
+        this.languageEntity = languageEntity;
         this.category = category;
     }
 
