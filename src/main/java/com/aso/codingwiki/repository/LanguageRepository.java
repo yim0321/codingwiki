@@ -11,5 +11,5 @@ import java.util.Optional;
 @Repository
 public interface LanguageRepository extends JpaRepository<LanguageEntity,Long> {
 
-    List<LanguageEntity> findByLanguage(String Language);
+    Optional<LanguageEntity> findByLanguage(String Language);
 }

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -20,7 +21,6 @@ public class LanguageController {
     /**
      * create
      */
-
     @PostMapping("language")
     public long insLanguage(@RequestBody InsLanguageRequest insLanguageRequest){
         return service.insLanguage(insLanguageRequest.getLanguage());
@@ -32,8 +32,13 @@ public class LanguageController {
 
     @GetMapping("language")
     public List<SellLanguageAllReponse> selLanguageAll(){
-        List<SellLanguageAllReponse> languageEntity = service.sellLanguageAll();
-        return languageEntity;
+        List<LanguageEntity> languageEntities = service.sellLanguageAll();
+
+        return languageEntities
+                .stream()
+                .map(language-> new SellLanguageAllReponse(language))
+                .collect(Collectors.toList());
+
     }
 
 

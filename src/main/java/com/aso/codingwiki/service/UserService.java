@@ -1,12 +1,12 @@
 package com.aso.codingwiki.service;
 
-import com.aso.codingwiki.controller.UserController;
-import com.aso.codingwiki.model.user.request.DelUserRequest;
-import com.aso.codingwiki.model.user.request.InsUserRequest;
+import com.aso.codingwiki.exception.OverlapUserException;
+import com.aso.codingwiki.exception.WrongPasswordException;
 import com.aso.codingwiki.model.user.request.UpdUserRequest;
 import com.aso.codingwiki.model.user.UserEntity;
 import com.aso.codingwiki.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,49 +22,46 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
 
-    public long insUser(InsUserRequest insUserRequest) {
+    public long insUser(UserEntity userEntity) {
 
-        Optional<UserEntity> userEntity_ = repository.findOpByuserEmail(insUserRequest.getUserEmail());
-        //비밀번호 암호화
-        insUserRequest.passwordEncoder(passwordEncoder);
-        /**오류처리로 변경해야함**/
-        if(!userEntity_.isPresent()){
-            UserEntity user = insUserRequest.builderEntity();
-            repository.save(user);
-            return user.getId();
+        Optional<UserEntity> userEntity_ = repository.
+                findOpByuserEmail(userEntity.getUserEmail());
+        if(userEntity_.isPresent()){
+            throw new OverlapUserException("중복된 사용자 입니다.");
         }
-       return 0;
+        //비밀번호 암호화
+        userEntity.userPasswordEncoder(passwordEncoder);
+        repository.save(userEntity);
+       return userEntity.getId();
     }
 
 
     public long updUser(UpdUserRequest updUserRequest) {
 
         Optional<UserEntity> userEntity_ = repository.findById(updUserRequest.getId());
-        /**오류처리로 변경해야함**/
-        if(userEntity_.isPresent()){
-            UserEntity userEntity = userEntity_.get();
-            if(passwordEncoder.matches(updUserRequest.getOldPw(), userEntity.getUserPw())){
-                userEntity.setUserPw(passwordEncoder.encode(updUserRequest.getNewPw()));
-            return userEntity.getId();
-            }
+        if(!userEntity_.isPresent()){
+            throw new UsernameNotFoundException("사용자를 찾을수 없습니다.");
         }
-        return 0;
+        UserEntity userEntity = userEntity_.get();
+        if(!passwordEncoder.matches(updUserRequest.getOldPw(), userEntity.getUserPw())) {
+            throw new WrongPasswordException("비밀번호가 틀렸습니다.");
+        }
+        userEntity.userPasswordEncoder(passwordEncoder,updUserRequest.getNewPw());
+        return userEntity.getId();
 
 
     }
 
-    public long delUser(DelUserRequest delUserRequest) {
+    public long delUser(long userId) {
 
-        Optional<UserEntity> userEntity_ = repository.findById(delUserRequest.getId());
+        Optional<UserEntity> userEntity_ = repository.findById(userId);
         /**오류처리로 변경해야함**/
-        if(userEntity_.isPresent()){
-            UserEntity userEntity = userEntity_.get();
-            if(passwordEncoder.matches(delUserRequest.getUserPw(), userEntity.getUserPw())){
-                repository.delete(userEntity);
-                return userEntity.getId();
-            }
+        if(!userEntity_.isPresent()){
+            throw new UsernameNotFoundException("사용자를 찾을수 없습니다.");
         }
-        return 0;
+        UserEntity userEntity = userEntity_.get();
+        repository.delete(userEntity);
+        return userEntity.getId();
     }
 
 

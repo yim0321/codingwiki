@@ -1,5 +1,8 @@
 package com.aso.codingwiki.service;
 
+import com.aso.codingwiki.exception.CategoryNotFoundException;
+import com.aso.codingwiki.exception.LanguageNotFoundException;
+import com.aso.codingwiki.exception.OverlapCategoryException;
 import com.aso.codingwiki.model.category.CategoryEntity;
 import com.aso.codingwiki.model.language.LanguageEntity;
 import com.aso.codingwiki.repository.CategoryRepository;
@@ -7,7 +10,6 @@ import com.aso.codingwiki.repository.LanguageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,37 +22,44 @@ public class CategoryService {
 
     public long insCategory(String category,long languageID) {
 
-        Optional<LanguageEntity> languageEntity_= languageRepository.findById(languageID);
-        if(languageEntity_.isPresent()){
-
-            CategoryEntity categoryEntity = new CategoryEntity(category,languageEntity_.get());
-            repository.save(categoryEntity);
-            return  categoryEntity.getId();
+        Optional<LanguageEntity> languageEntity_ = languageRepository.findById(languageID);
+        if(!languageEntity_.isPresent()){
+            throw new LanguageNotFoundException("없는 프로그래밍언어 입니다.");
         }
-        return 0;
+
+        Optional<CategoryEntity> categoryEntity_ = repository.findByCategory(category);
+        if(categoryEntity_.isPresent()){
+            throw new OverlapCategoryException("중복된 카테고리입니다.");
+        }
+
+        CategoryEntity categoryEntity = CategoryEntity.builder().
+                languageEntity(languageEntity_.get()).
+                category(category).
+                build();
+        repository.save(categoryEntity);
+        return  categoryEntity.getId();
     }
 
 
-    public List<CategoryEntity> sellCategoryLanguage(long languageId) {
+    public List<CategoryEntity> sellCategoryInLanguage(long languageId) {
         return repository.findByLanguageEntity(languageId);
     }
 
-    public List<CategoryEntity> sellCategory(long categoryId) {
-        ArrayList<CategoryEntity> list = new ArrayList<>();
+    public CategoryEntity sellCategory(long categoryId) {
         Optional<CategoryEntity> categoryEntity_ = repository.findById(categoryId);
         if(categoryEntity_.isPresent()) {
-            list.add(categoryEntity_.get());
+            throw new CategoryNotFoundException("없는 카테고리 입니다.");
         }
-        return list;
+        return categoryEntity_.get();
     }
 
     public long delCategory(long categoryId) {
         Optional<CategoryEntity> categoryEntity_ = repository.findById(categoryId);
         if(categoryEntity_.isPresent()) {
-            repository.delete(categoryEntity_.get());
-            return categoryEntity_.get().getId();
+            throw new CategoryNotFoundException("없는 카테고리 입니다.");
         }
-        return 0;
+        repository.delete(categoryEntity_.get());
+        return categoryEntity_.get().getId();
 
     }
 }

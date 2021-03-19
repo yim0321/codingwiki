@@ -2,6 +2,7 @@ package com.aso.codingwiki.model.category;
 
 import com.aso.codingwiki.model.language.LanguageEntity;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -27,6 +28,7 @@ public class CategoryEntity {
     @JoinColumn(name = "language_id")
     private LanguageEntity languageEntity;
 
+    @Builder
     public CategoryEntity(String category,LanguageEntity languageEntity) {
 
         this.languageEntity = languageEntity;

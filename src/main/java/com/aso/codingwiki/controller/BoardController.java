@@ -2,26 +2,16 @@ package com.aso.codingwiki.controller;
 
 
 import com.aso.codingwiki.model.board.BoardEntity;
-import com.aso.codingwiki.model.board.ImgResopnse;
 import com.aso.codingwiki.service.BoardService;
-import com.google.gson.JsonObject;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -83,6 +73,7 @@ public class BoardController {
 
     @PatchMapping("/board/{boardId}")
     public long updBoard(@PathVariable(name = "boardId") long boardId){
+
         return service.updBoard(boardId);
     }
 

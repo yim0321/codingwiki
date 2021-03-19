@@ -3,6 +3,7 @@ package com.aso.codingwiki.model.language;
 
 import com.aso.codingwiki.model.common.DateTime;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -24,10 +25,12 @@ public class LanguageEntity extends DateTime{
 
     private String language;//언어 이름
 
+    @Builder
     public LanguageEntity(String language){
         this.language = language;
     }
 
+    @Builder
     public LanguageEntity(Long id) {
         this.id = id;
     }

@@ -1,6 +1,8 @@
 package com.aso.codingwiki.service;
 
 
+import com.aso.codingwiki.exception.LanguageNotFoundException;
+import com.aso.codingwiki.exception.OverlapLanguageException;
 import com.aso.codingwiki.model.language.LanguageEntity;
 import com.aso.codingwiki.model.language.SellLanguageAllReponse;
 import com.aso.codingwiki.repository.LanguageRepository;
@@ -19,33 +21,34 @@ public class LanguageService {
 
     private final LanguageRepository repository;
 
-    public List<SellLanguageAllReponse> sellLanguageAll() {
-        List<LanguageEntity> languageEntities = repository.findAll();
-
-        return languageEntities
-                .stream()
-                .map(language-> new SellLanguageAllReponse(language))
-                .collect(Collectors.toList());
-    }
-
 
     public long insLanguage(String language) {
-        List<LanguageEntity>languageEntities = repository.findByLanguage(language);
-        if(languageEntities.size()<=0) {
-            LanguageEntity languageEntity = new LanguageEntity(language);
-            repository.save(languageEntity);
-            return languageEntity.getId();
+
+        Optional<LanguageEntity> languageEntity_ = repository.findByLanguage(language);
+        if(languageEntity_.isPresent()){
+            throw new OverlapLanguageException("이미 같은 프로그램언어가 있습니다.");
         }
-        return 0;
+        LanguageEntity languageEntity = LanguageEntity.
+                builder().
+                language(language).
+                build();
+        repository.save(languageEntity);
+        return languageEntity.getId();
     }
 
+    public List<LanguageEntity> sellLanguageAll() {
+
+        List<LanguageEntity> languageEntities = repository.findAll();
+        return languageEntities;
+    }
 
     public long delLanguage(Long id) {
+
         Optional<LanguageEntity> languageEntity_ = repository.findById(id);
         if(languageEntity_.isPresent()){
-            repository.delete(languageEntity_.get());
-            return id;
+            throw new LanguageNotFoundException("삭제하고자 하는 프로그래밍언어를 찾을 수 없습니다.");
         }
-        return 0;
+        repository.delete(languageEntity_.get());
+        return id;
     }
 }

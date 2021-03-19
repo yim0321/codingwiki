@@ -1,7 +1,9 @@
 package com.aso.codingwiki.controller;
 
 import com.aso.codingwiki.model.category.CategoryEntity;
+import com.aso.codingwiki.model.language.LanguageEntity;
 import com.aso.codingwiki.service.CategoryService;
+import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -21,31 +23,47 @@ public class CategoryController {
     @PostMapping("/category")
     public long insCategory(@RequestBody InsCategoryRequest insCategoryRequest){
 
-        System.out.println(insCategoryRequest.getLanguageID());
-        System.out.println(insCategoryRequest.getCategory());
         return service.insCategory(insCategoryRequest.getCategory(),insCategoryRequest.getLanguageID());
     }
+
     /**
      * read
      */
+
     //두개 분리해서 작성하기
-    @GetMapping("/category/{languageID}/{categoryId}")
-    public List<CategoryResponse> sellCategoryLanguage(
-            @PathVariable(name = "languageID") long languageId,
-            @PathVariable(name = "categoryId") long categoryId){
-
-        List<CategoryEntity> entityList;
-
-        if(categoryId == 0){
-            entityList  = service.sellCategoryLanguage(languageId);
-        }
-        else {
-            entityList = service.sellCategory(categoryId);
-        }
+//    @GetMapping("/category/{languageID}/{categoryId}")
+//    public List<CategoryResponse> sellCategoryLanguage(
+//            @PathVariable(name = "languageID") long languageId,
+//            @PathVariable(name = "categoryId") long categoryId){
+//
+//        List<CategoryEntity> entityList;
+//
+//        if(categoryId == 0){
+//            entityList  = service.sellCategoryInLanguage(languageId);
+//        }
+//        else {
+//            entityList = service.sellCategory(categoryId);
+//        }
+//        return entityList
+//                .stream()
+//                .map((categoryEntity)->new CategoryResponse(categoryEntity))
+//                .collect(Collectors.toList());
+//    }
+    @GetMapping("/category/languageID/{languageID}")
+    public List<CategoryResponse> sellCategoryInLanguage(
+            @PathVariable(name = "languageID") long languageId){
+        List<CategoryEntity> entityList  = service.sellCategoryInLanguage(languageId);
         return entityList
                 .stream()
-                .map((categoryEntity)->new CategoryResponse(categoryEntity.getId(),categoryEntity.getCategory()))
+                .map((categoryEntity)->new CategoryResponse(categoryEntity))
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping("/category/categoryId/{categoryId}")
+    public CategoryResponse sellCategory(
+            @PathVariable(name = "categoryId") long categoryId){
+        CategoryEntity categoryEntity  = service.sellCategory(categoryId);
+        return new CategoryResponse(categoryEntity);
     }
 
 
@@ -73,18 +91,21 @@ public class CategoryController {
 
         private String category;
         private long languageID;
+
     }
     /**
      * innerclass Response
      */
     @Data
     static class CategoryResponse{
+
         private long id;
         private String category;
 
-        public CategoryResponse(long id, String category) {
-            this.id = id;
-            this.category = category;
+        @Builder
+        public CategoryResponse(CategoryEntity categoryEntity) {
+            this.id = categoryEntity.getId();
+            this.category = categoryEntity.getCategory();
         }
     }
 

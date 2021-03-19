@@ -1,20 +1,12 @@
 package com.aso.codingwiki.model.user.request;
 
+import com.aso.codingwiki.model.user.UserEntity;
 import lombok.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
 import javax.validation.constraints.NotEmpty;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UpdUserRequest {
-
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-
 
     @NotEmpty
     private long id;
@@ -24,6 +16,5 @@ public class UpdUserRequest {
     //@Pattern() 정규식 작성 요망
     @NotEmpty
     private String  newPw;
-
 
 }
