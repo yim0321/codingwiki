@@ -25,7 +25,7 @@ public class UserService {
     public long insUser(UserEntity userEntity) {
 
         Optional<UserEntity> userEntity_ = repository.
-                findOpByuserEmail(userEntity.getUserEmail());
+                findOpByUserEmail(userEntity.getUserEmail());
         if(userEntity_.isPresent()){
             throw new OverlapUserException("중복된 사용자 입니다.");
         }
@@ -52,9 +52,9 @@ public class UserService {
 
     }
 
-    public long delUser(long userId) {
+    public long delUser(String userEmail) {
 
-        Optional<UserEntity> userEntity_ = repository.findById(userId);
+        Optional<UserEntity> userEntity_ = repository.findOptionalByUserEmail(userEmail);
         /**오류처리로 변경해야함**/
         if(!userEntity_.isPresent()){
             throw new UsernameNotFoundException("사용자를 찾을수 없습니다.");

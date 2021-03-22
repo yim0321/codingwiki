@@ -1,5 +1,8 @@
 package com.aso.codingwiki.service;
 
+import com.aso.codingwiki.exception.BoardNotFoundException;
+import com.aso.codingwiki.exception.CategoryNotFoundException;
+import com.aso.codingwiki.exception.ImageDeletionFailed;
 import com.aso.codingwiki.model.board.BoardEntity;
 import com.aso.codingwiki.model.board.ImgEntity;
 import com.aso.codingwiki.model.board.ImgResopnse;
@@ -38,52 +41,66 @@ public class BoardService {
 
     public long insBoard(BoardEntity boardEntity,long categoryId,String uuid) {
 
-
-
         Optional<CategoryEntity> categoryEntity_ = categoryRepository.findById(categoryId);
-        if(categoryEntity_.isPresent()){
-            boardEntity.setCategoryEntity(categoryEntity_.get());
-            repository.save(boardEntity);
-
-            Optional<ImgEntity>imgEntity_ = imgRepository.findByUuid(uuid);
-            if(imgEntity_.isPresent()){
-                imgEntity_.get().setImgBool(true);
-            }
-
-            return boardEntity.getId();
+        if(!categoryEntity_.isPresent()){
+            throw new CategoryNotFoundException("없는 카테고리 입니다.");
         }
-        return 0;
+
+        boardEntity.setCategoryEntity(categoryEntity_.get());
+        repository.save(boardEntity);
+
+        Optional<ImgEntity>imgEntity_ = imgRepository.findByUuid(uuid);
+
+        //오류 처리 하면안됨 이미지가 없을수도 있음
+        if(imgEntity_.isPresent()){
+            imgEntity_.get().setImgBool(true);
+        }
+
+        return boardEntity.getId();
 
     }
 
     public List<BoardEntity> selBoard(long categoryId) {
 
-        List<BoardEntity> boardEntities = new ArrayList<>();
         Optional<CategoryEntity> categoryEntity_ = categoryRepository.findById(categoryId);
-        if(categoryEntity_.isPresent()){
-            boardEntities.addAll(repository.findByCategoryEntity(categoryEntity_.get()));
+        if(!categoryEntity_.isPresent()){
+            throw new CategoryNotFoundException("없는 카테고리 입니다.");
         }
-        return boardEntities;
+        return repository.findByCategoryEntity(categoryEntity_.get());
     }
 
     public long delBoard(long boardId) {
 
         Optional<BoardEntity> boardEntity_ = repository.findById(boardId);
-        if(boardEntity_.isPresent()){
-            repository.delete(boardEntity_.get());
-            return boardEntity_.get().getId();
+        if(!boardEntity_.isPresent()){
+            throw new BoardNotFoundException("없는 글 입니다.");
         }
-        return 0;
+        repository.delete(boardEntity_.get());
+        return boardEntity_.get().getId();
     }
 
 
-    public long updBoard(long boardId) {
+    public long updBoard(long boardId, BoardEntity newBoardEntity, String uuid) {
+
         Optional<BoardEntity> boardEntity_ = repository.findById(boardId);
         if(boardEntity_.isPresent()){
-            repository.save(boardEntity_.get());
-            return boardEntity_.get().getId();
+            throw new BoardNotFoundException("없는 글 입니다.");
         }
-        return 0;
+        BoardEntity BoardEntity = boardEntity_.get();
+        //기존 이미지
+        Optional<ImgEntity> oldImgEntity_ = imgRepository.findByUuid(BoardEntity.getUuid());
+        if(oldImgEntity_.isPresent()){
+            oldImgEntity_.get().setImgBool(false);
+        }
+        //새로운 이미지
+        Optional<ImgEntity> imgEntity_ = imgRepository.findByUuid(uuid);
+        if(imgEntity_.isPresent()){
+            imgEntity_.get().setImgBool(true);
+        }
+        BoardEntity.changeEntity(newBoardEntity);
+        repository.save(BoardEntity);
+        return BoardEntity.getId();
+
     }
 
     public ImgResopnse imgIns(HttpServletRequest request,

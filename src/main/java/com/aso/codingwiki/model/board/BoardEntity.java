@@ -45,4 +45,12 @@ public class BoardEntity extends DateTime {
     public void setCategoryEntity(CategoryEntity categoryEntity) {
         this.categoryEntity = categoryEntity;
     }
+
+    public void changeEntity(BoardEntity newBoardEntity){
+        this.uuid = newBoardEntity.getUuid();
+        this.boardTitle = newBoardEntity.getBoardTitle();
+        this.boardContents = newBoardEntity.getBoardContents();
+    }
+
+
 }

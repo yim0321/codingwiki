@@ -12,7 +12,6 @@ import java.util.List;
 @Entity//jpa entity 등록
 @Getter//getter 생성
 @NoArgsConstructor(access = AccessLevel.PROTECTED)//기본생성자 생성 (접근지정자= PROTECTED)
-@RequiredArgsConstructor
 @SequenceGenerator(
         name = "user_seq",
         initialValue = 1,

@@ -62,7 +62,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String jwtToken = JWT.create()
                 .withSubject("jwtToken")
                 .withExpiresAt(new Date(System.currentTimeMillis()+600000))
-                .withClaim("user_id", principalDetailis.getUser().getUserEmail())
+                .withClaim("userEmail", principalDetailis.getUser().getUserEmail())
                 .sign(Algorithm.HMAC512("codingwiki"));
         //response.addHeader("Authorization", "Bearer "+jwtToken);
         response.getWriter().append("Authorization:" ).append("Bearer "+jwtToken);

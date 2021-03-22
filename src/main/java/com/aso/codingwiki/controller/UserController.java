@@ -8,6 +8,9 @@ import com.aso.codingwiki.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
+
 @RestController
 @RequiredArgsConstructor
 public class UserController {
@@ -39,10 +42,9 @@ public class UserController {
     /**
      * delete
      */
-    @DeleteMapping("/user/{userId}")
-    public long delUser(
-            @PathVariable(name = "userId") long userId){
-        return service.delUser(userId);
+    @DeleteMapping("/user")
+    public long delUser(Principal principal){
+        return service.delUser(principal.getName());
     }
 
     /**

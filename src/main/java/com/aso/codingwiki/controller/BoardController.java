@@ -54,7 +54,7 @@ public class BoardController {
     /**
      * read
      */
-
+    //카테고리 셀렉트
     @GetMapping("/board/{categoryId}")
     public List<SelBoardResponse> selBoard(@PathVariable(name = "categoryId") long categoryId){
 
@@ -64,6 +64,10 @@ public class BoardController {
                 .collect(Collectors.toList());
     }
 
+    //점수를 통한 보드 전체 검색
+
+    //검색어를 통한 검색
+
     /**
      * update
      *
@@ -72,9 +76,16 @@ public class BoardController {
      */
 
     @PatchMapping("/board/{boardId}")
-    public long updBoard(@PathVariable(name = "boardId") long boardId){
+    public long updBoard(@PathVariable(name = "boardId") long boardId,
+                         @RequestBody InsBoardRequest insBoardRequest){
 
-        return service.updBoard(boardId);
+        BoardEntity boardEntity =
+                BoardEntity.builder()
+                        .boardTitle(insBoardRequest.boardTitle)
+                        .boardContents(insBoardRequest.boardContents)
+                        .uuid(insBoardRequest.uuid)
+                        .build();
+        return service.updBoard(boardId,boardEntity,insBoardRequest.uuid);
     }
 
 

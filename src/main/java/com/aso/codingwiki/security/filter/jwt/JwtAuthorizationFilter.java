@@ -48,9 +48,9 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter{
                 JWT.require(Algorithm.HMAC512("codingwiki")).build().verify(jwtToken).getClaim("userEmail").asString();
 
 
-
         if(userEmail != null) {
-            UserEntity user = repository.findByuserEmail(userEmail);
+
+            UserEntity user = repository.findByUserEmail(userEmail);
 
             PrincipalDetails principalDetails = new PrincipalDetails(user);
 

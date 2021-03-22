@@ -55,10 +55,10 @@ public class LanguageController {
     /**
      * delete
      */
-    @DeleteMapping("language/{id}")
-    public long delLanguage(@PathVariable(name = "id") long id ){
+    @DeleteMapping("language/{languageId}")
+    public long delLanguage(@PathVariable(name = "languageId") long languageId ){
 
-        return service.delLanguage(id);
+        return service.delLanguage(languageId);
     }
 
 
