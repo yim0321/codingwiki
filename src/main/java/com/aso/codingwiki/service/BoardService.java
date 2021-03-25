@@ -2,14 +2,14 @@ package com.aso.codingwiki.service;
 
 import com.aso.codingwiki.exception.BoardNotFoundException;
 import com.aso.codingwiki.exception.CategoryNotFoundException;
-import com.aso.codingwiki.exception.ImageDeletionFailed;
+import com.aso.codingwiki.model.PopularBoardEntity;
 import com.aso.codingwiki.model.board.BoardEntity;
+import com.aso.codingwiki.model.board.BoardResponse;
 import com.aso.codingwiki.model.board.ImgEntity;
 import com.aso.codingwiki.model.board.ImgResopnse;
 import com.aso.codingwiki.model.category.CategoryEntity;
-import com.aso.codingwiki.repository.BoardRepository;
-import com.aso.codingwiki.repository.CategoryRepository;
-import com.aso.codingwiki.repository.ImgRepository;
+import com.aso.codingwiki.model.comment.CommentEntity;
+import com.aso.codingwiki.repository.*;
 import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -24,10 +24,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +35,8 @@ public class BoardService {
     private final BoardRepository repository;
     private final CategoryRepository categoryRepository;
     private final ImgRepository imgRepository;
+    private final StarPointRepository starPointRepository;
+    private final CommentRepository commentRepository;
 
 
     public long insBoard(BoardEntity boardEntity,long categoryId,String uuid) {
@@ -60,7 +60,7 @@ public class BoardService {
 
     }
 
-    public List<BoardEntity> selBoard(long categoryId) {
+    public List<BoardEntity> sellBoardCategory(long categoryId) {
 
         Optional<CategoryEntity> categoryEntity_ = categoryRepository.findById(categoryId);
         if(!categoryEntity_.isPresent()){
@@ -83,7 +83,7 @@ public class BoardService {
     public long updBoard(long boardId, BoardEntity newBoardEntity, String uuid) {
 
         Optional<BoardEntity> boardEntity_ = repository.findById(boardId);
-        if(boardEntity_.isPresent()){
+        if(!boardEntity_.isPresent()){
             throw new BoardNotFoundException("없는 글 입니다.");
         }
         BoardEntity BoardEntity = boardEntity_.get();
@@ -154,4 +154,43 @@ public class BoardService {
 
         return null;
     }
+
+    public BoardResponse sellBoardOne(long boardId) {
+        Optional<BoardEntity> boardEntity_ = repository.findById(boardId);
+        if(boardEntity_.isPresent()){
+            throw new BoardNotFoundException("없는 글 입니다.");
+        }
+        BoardEntity boardEntity = boardEntity_.get();
+        boardEntity.addViews();
+
+        List<CommentEntity> commentEntityList = commentRepository.findByBoardEntity(boardEntity);
+        return new BoardResponse(boardEntity,commentEntityList);
+
+    }
+
+    public List<BoardEntity> sellPopularBoard(long languageId) {
+
+        List<BoardEntity> boardEntities = repository.findByLanguageEntity(languageId);
+        return boardEntities;
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

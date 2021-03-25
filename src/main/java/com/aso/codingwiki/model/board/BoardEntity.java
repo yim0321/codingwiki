@@ -1,6 +1,7 @@
 package com.aso.codingwiki.model.board;
 
 import com.aso.codingwiki.model.category.CategoryEntity;
+import com.aso.codingwiki.model.comment.CommentEntity;
 import com.aso.codingwiki.model.common.DateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -8,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
@@ -25,13 +27,9 @@ public class BoardEntity extends DateTime {
 
     private String boardTitle;//글제몪
     private String boardContents;//글내용
-    private float sumStarPoint;//별점
+    private float avgStarPoint;//별점
     private long views;//조회수
     private String uuid;//이미지 uuid
-    /**
-     * 콜렉션으로 변경할것
-     */
-
 
     @Builder
     public BoardEntity(String boardTitle,String boardContents,String uuid){
@@ -52,5 +50,11 @@ public class BoardEntity extends DateTime {
         this.boardContents = newBoardEntity.getBoardContents();
     }
 
+    public void addViews(){
+        this.views =+ 1;
+    }
 
+    public void setAvgStarPoint(float avgStarPoint) {
+        this.avgStarPoint = avgStarPoint;
+    }
 }

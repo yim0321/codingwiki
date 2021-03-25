@@ -1,6 +1,7 @@
 package com.aso.codingwiki.model.language;
 
 
+import com.aso.codingwiki.model.comment.CommentEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

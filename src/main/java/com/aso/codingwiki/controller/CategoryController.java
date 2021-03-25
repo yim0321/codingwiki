@@ -1,7 +1,6 @@
 package com.aso.codingwiki.controller;
 
 import com.aso.codingwiki.model.category.CategoryEntity;
-import com.aso.codingwiki.model.language.LanguageEntity;
 import com.aso.codingwiki.service.CategoryService;
 import lombok.Builder;
 import lombok.Data;
@@ -26,9 +25,7 @@ public class CategoryController {
         return service.insCategory(insCategoryRequest.getCategory(),insCategoryRequest.getLanguageID());
     }
 
-    /**
-     * read
-     */
+
 
     //두개 분리해서 작성하기
 //    @GetMapping("/category/{languageID}/{categoryId}")

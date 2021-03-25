@@ -2,6 +2,7 @@ package com.aso.codingwiki.controller;
 
 
 import com.aso.codingwiki.model.board.BoardEntity;
+import com.aso.codingwiki.model.board.BoardResponse;
 import com.aso.codingwiki.service.BoardService;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -54,25 +55,33 @@ public class BoardController {
     /**
      * read
      */
-    //카테고리 셀렉트
-    @GetMapping("/board/{categoryId}")
-    public List<SelBoardResponse> selBoard(@PathVariable(name = "categoryId") long categoryId){
-
-        return service.selBoard(categoryId)
-                .stream()
-                .map((boardEntity)->new SelBoardResponse(boardEntity))
-                .collect(Collectors.toList());
+    //카테고리 셀렉트 수정요망 뎃글 정보가 없음
+//    @GetMapping("/board/category/{categoryId}")
+//    public List<BoardResponse> sellBoardCategory(@PathVariable(name = "categoryId") long categoryId){
+//
+//        return service.sellBoardCategory(categoryId)
+//                .stream()
+//                .map((boardEntity)->new BoardResponse(boardEntity))
+//                .collect(Collectors.toList());
+//    }
+    //하나 검색 조회수도 증가시킴
+    @GetMapping("/board/{boardId}")
+    public BoardResponse sellBoardOne(@PathVariable(name = "boardId") long boardId){
+        return service.sellBoardOne(boardId);
     }
 
-    //점수를 통한 보드 전체 검색
+    //별점을 통한 최상위 글만 가져오기
+    @GetMapping("/board/popular/{languageId}")
+    public BoardResponse sellPopularBoard(@PathVariable(name = "languageId") long languageId){
+        service.sellPopularBoard(languageId);
+        return null;
+    }
+
 
     //검색어를 통한 검색
 
     /**
      * update
-     *
-     * PUT 일부 업데이트
-     * PATCH 모두 업데이트
      */
 
     @PatchMapping("/board/{boardId}")
@@ -116,23 +125,7 @@ public class BoardController {
         private String uuid;
 
     }
-    @Getter
-    @NoArgsConstructor
-    static class SelBoardResponse{
 
-        private String boardTitle;//글제몪
-        private String boardContents;//글내용
-        private float sumStarPoint;//별점
-        private long views;//조회수
-
-
-        public SelBoardResponse(BoardEntity boardEntity){
-            this.boardTitle = boardEntity.getBoardTitle();
-            this.boardContents = boardEntity.getBoardContents();
-            this.sumStarPoint = boardEntity.getSumStarPoint();
-            this.views = boardEntity.getViews();
-        }
-    }
 
 
 }
