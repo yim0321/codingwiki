@@ -13,6 +13,21 @@ spring:
     url: "jdbc:mysql://125.185.128.147:3306/CodingWiki?characterEncoding=UTF-8&serverTimezone=Asia/Seoul"
     username: root
     password: 123123
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ascoreams0321
+    password: yim137654!
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+            required: true
+          auth: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
 
   jpa:
     hibernate:

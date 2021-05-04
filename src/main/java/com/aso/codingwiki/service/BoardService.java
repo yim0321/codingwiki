@@ -2,6 +2,7 @@ package com.aso.codingwiki.service;
 
 import com.aso.codingwiki.exception.BoardNotFoundException;
 import com.aso.codingwiki.exception.CategoryNotFoundException;
+import com.aso.codingwiki.exception.LanguageNotFoundException;
 import com.aso.codingwiki.model.PopularBoardEntity;
 import com.aso.codingwiki.model.board.BoardEntity;
 import com.aso.codingwiki.model.board.BoardResponse;
@@ -9,10 +10,13 @@ import com.aso.codingwiki.model.board.ImgEntity;
 import com.aso.codingwiki.model.board.ImgResopnse;
 import com.aso.codingwiki.model.category.CategoryEntity;
 import com.aso.codingwiki.model.comment.CommentEntity;
+import com.aso.codingwiki.model.language.LanguageEntity;
+import com.aso.codingwiki.model.user.UserEntity;
 import com.aso.codingwiki.repository.*;
 import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -24,8 +28,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,16 +43,26 @@ public class BoardService {
     private final ImgRepository imgRepository;
     private final StarPointRepository starPointRepository;
     private final CommentRepository commentRepository;
+    private final LanguageRepository languageRepository;
+    private final PopularBoardRepository popularBoardRepository;
+    private final UserRepository userRepository;
 
 
-    public long insBoard(BoardEntity boardEntity,long categoryId,String uuid) {
+    public long insBoard(BoardEntity boardEntity, long categoryId, String uuid, Principal principal) {
 
         Optional<CategoryEntity> categoryEntity_ = categoryRepository.findById(categoryId);
+        Optional<UserEntity> userEntity_ = userRepository.findOpByUserEmail(principal.getName());
         if(!categoryEntity_.isPresent()){
             throw new CategoryNotFoundException("없는 카테고리 입니다.");
         }
 
+        if(!userEntity_.isPresent()){
+            throw new UsernameNotFoundException("없는 유저 입니다.");
+        }
+
         boardEntity.setCategoryEntity(categoryEntity_.get());
+        boardEntity.setUserEntity(userEntity_.get());
+
         repository.save(boardEntity);
 
         Optional<ImgEntity>imgEntity_ = imgRepository.findByUuid(uuid);
@@ -157,21 +173,29 @@ public class BoardService {
 
     public BoardResponse sellBoardOne(long boardId) {
         Optional<BoardEntity> boardEntity_ = repository.findById(boardId);
-        if(boardEntity_.isPresent()){
+        if(!boardEntity_.isPresent()){
             throw new BoardNotFoundException("없는 글 입니다.");
         }
         BoardEntity boardEntity = boardEntity_.get();
         boardEntity.addViews();
 
+        repository.save(boardEntity);
+
         List<CommentEntity> commentEntityList = commentRepository.findByBoardEntity(boardEntity);
-        return new BoardResponse(boardEntity,commentEntityList);
+        return new BoardResponse(commentEntityList,boardEntity);
 
     }
 
     public List<BoardEntity> sellPopularBoard(long languageId) {
 
-        List<BoardEntity> boardEntities = repository.findByLanguageEntity(languageId);
-        return boardEntities;
+        Optional<LanguageEntity> languageEntity_ = languageRepository.findById(languageId);
+        if(!languageEntity_.isPresent()){
+            throw new LanguageNotFoundException("없는 언어 입니다.");
+        }
+        List<PopularBoardEntity> popularBoardEntity_ =
+                popularBoardRepository.findByLanguageEntity(languageEntity_.get());
+        return popularBoardEntity_.stream().map(PopularBoardEntity-> PopularBoardEntity.getBoardEntity())
+                .collect(Collectors.toList());
     }
 }
 

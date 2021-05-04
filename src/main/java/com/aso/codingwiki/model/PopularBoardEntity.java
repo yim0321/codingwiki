@@ -25,14 +25,21 @@ public class PopularBoardEntity {
     private BoardEntity boardEntity;
 
     @ManyToOne
+    @JoinColumn(name = "category_id")
+    private CategoryEntity categoryEntity;
+
+    @ManyToOne
     @JoinColumn(name = "language_id")
     private LanguageEntity languageEntity;
 
 
+
+
     @Builder
-    public PopularBoardEntity(BoardEntity boardEntity,LanguageEntity languageEntity){
+    public PopularBoardEntity(BoardEntity boardEntity,CategoryEntity categoryEntity, LanguageEntity languageEntity){
         this.boardEntity = boardEntity;
         this.languageEntity = languageEntity;
+        this.categoryEntity = categoryEntity;
     }
 
     public void setBoardEntity(BoardEntity boardEntity,LanguageEntity languageEntity) {

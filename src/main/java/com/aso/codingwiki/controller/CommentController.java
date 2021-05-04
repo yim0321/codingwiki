@@ -1,6 +1,7 @@
 package com.aso.codingwiki.controller;
 
 import com.aso.codingwiki.model.comment.CommentEntity;
+import com.aso.codingwiki.model.comment.CommentResponse;
 import com.aso.codingwiki.service.CommentService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,11 +23,11 @@ public class CommentController {
      * create
      */
     @PostMapping("/comment")
-    public long insComment(@RequestBody InsCommentRequest insCommentRequest, Principal principal){
+    public CommentResponse insComment(@RequestBody InsCommentRequest insCommentRequest, Principal principal){
 
         CommentEntity commentEntity = new CommentEntity(insCommentRequest.getComment());
-
-        return service.insComment(commentEntity,insCommentRequest.getBoardId(),principal.getName());
+        commentEntity = service.insComment(commentEntity,insCommentRequest.getBoardId(),principal.getName());
+        return new CommentResponse(commentEntity);
     }
 
     /**
@@ -92,5 +94,8 @@ public class CommentController {
 
         private String comment;
     }
+
+
+
 
 }

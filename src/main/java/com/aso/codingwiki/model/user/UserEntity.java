@@ -25,12 +25,22 @@ public class UserEntity extends DateTime {
 
     private String userEmail;//유저 아이디
     private String userPw;
+    private String name;
     private long point;
+    private String profileUrl;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    private String roles = "ROLE_USER_BRONZE";//브론즈 실버 골드 플래티넘 다이아 등급으로 구성
+    private String roles = "Unauthenticated";//enum으로 만들기
+
+    public void setProfileUrl(String profileUrl) {
+        this.profileUrl = profileUrl;
+    }
+
+    public void setUserPw(String userPw) {
+        this.userPw = userPw;
+    }
 
     public List<String> getRoleList() {
         if(this.roles.length() > 0) {
@@ -39,10 +49,16 @@ public class UserEntity extends DateTime {
         return new ArrayList<>();
     }
 
+    public void setRoles(String roles) {
+        this.roles = roles;
+    }
+
     @Builder
-    public UserEntity(String userEmail, String userPw) {
+    public UserEntity(String userEmail, String userPw, String name, Gender gender) {
         this.userEmail = userEmail;
         this.userPw = userPw;
+        this.name = name;
+        this.gender = gender;
     }
 
     public void userPasswordEncoder(PasswordEncoder passwordEncoder){

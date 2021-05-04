@@ -28,7 +28,7 @@ public class StarPointService {
     private final PopularBoardRepository popularBoardRepository;
     private final BoardDslRepository boardDslRepository;
 
-    public long updStarPoint(float starPoint, long boardId, String userEmail) {
+    public float updStarPoint(float starPoint, long boardId, String userEmail) {
 
         Optional<BoardEntity> boardEntity_ = boardRepository.findById(boardId);
         Optional<UserEntity> userEntity_ = userRepository.findOpByUserEmail(userEmail);
@@ -40,9 +40,9 @@ public class StarPointService {
             throw new UsernameNotFoundException("없는 유저 입니다.");
         }
         BoardEntity boardEntity = boardEntity_.get();
-
+        UserEntity userEntity = userEntity_.get();
         Optional<StarPointEntity> starPointEntity_ =
-                repository.findByBoardEntityAndUserEntity(boardEntity,userEntity_.get());
+                repository.findByBoardEntityAndUserEntity(boardEntity,userEntity);
         //기존의 별점이 있으면 삭제후 다시 작성
         if(starPointEntity_.isPresent()){
             repository.delete(starPointEntity_.get());
@@ -51,30 +51,31 @@ public class StarPointService {
         StarPointEntity starPointEntity = StarPointEntity
                 .builder()
                 .boardEntity(boardEntity)
-                .userEntity(userEntity_.get())
+                .userEntity(userEntity)
                 .starPoint(starPoint)
                 .build();
         repository.save(starPointEntity);
-
+        float starPointAvg = repository.starPointAvg(boardEntity);
         ///////////////////////////////////////////////////////글에대한 평균 별점 고치기
-        boardEntity.setAvgStarPoint(repository.starPointAvg(boardEntity));
+        boardEntity.setAvgStarPoint(starPointAvg);
         boardRepository.save(boardEntity);// 영속성 확인
         ///////////////////////////////////////////////////////가장 인기있는글 뽑아내기
         BoardEntity popularBoard = boardDslRepository.test(boardEntity.getCategoryEntity());//가장인기있는글
-        Optional<CategoryEntity> categoryEntity_ =
-                categoryRepository.findById(boardEntity.getCategoryEntity().getId());
+        CategoryEntity categoryEntity = boardEntity.getCategoryEntity();
 
-        if(!categoryEntity_.isPresent()){
-            throw new CategoryNotFoundException("없는 카테고리 입니다.");
+        Optional<PopularBoardEntity> popularBoardEntity_ = popularBoardRepository.findByCategoryEntity(categoryEntity);
+
+        if(popularBoardEntity_.isPresent()){
+           popularBoardRepository.delete(popularBoardEntity_.get());
         }
 
         PopularBoardEntity popularBoardEntity =
-                new PopularBoardEntity(popularBoard, categoryEntity_.get().getLanguageEntity());
+                new PopularBoardEntity(popularBoard, categoryEntity, categoryEntity.getLanguageEntity());
 
         popularBoardRepository.save(popularBoardEntity);
         //////////////////////////////////////////////////////
 
-        return starPointEntity.getId();
+        return starPointAvg;
     }
 
     public long delStarPoint(long starPointId) {

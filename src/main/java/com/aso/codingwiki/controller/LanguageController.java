@@ -2,7 +2,7 @@ package com.aso.codingwiki.controller;
 
 
 import com.aso.codingwiki.model.language.LanguageEntity;
-import com.aso.codingwiki.model.language.SellLanguageAllReponse;
+import com.aso.codingwiki.model.language.SellLanguageAllResponse;
 import com.aso.codingwiki.service.LanguageService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +22,13 @@ public class LanguageController {
      * create
      */
     @PostMapping("language")
-    public long insLanguage(@RequestBody InsLanguageRequest insLanguageRequest){
-        return service.insLanguage(insLanguageRequest.getLanguage());
+    public List<SellLanguageAllResponse> insLanguage(@RequestBody InsLanguageRequest insLanguageRequest){
+
+        List<LanguageEntity> languageEntities = service.insLanguage(insLanguageRequest.getLanguage());
+        return languageEntities
+                .stream()
+                .map(language-> new SellLanguageAllResponse(language))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -31,12 +36,12 @@ public class LanguageController {
      */
 
     @GetMapping("language")
-    public List<SellLanguageAllReponse> selLanguageAll(){
+    public List<SellLanguageAllResponse> selLanguageAll(){
         List<LanguageEntity> languageEntities = service.sellLanguageAll();
 
         return languageEntities
                 .stream()
-                .map(language-> new SellLanguageAllReponse(language))
+                .map(language-> new SellLanguageAllResponse(language))
                 .collect(Collectors.toList());
 
     }

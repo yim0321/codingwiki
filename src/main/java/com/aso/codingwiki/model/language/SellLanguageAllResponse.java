@@ -8,12 +8,12 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class SellLanguageAllReponse {
+public class SellLanguageAllResponse {
 
     private long id;
     private String language;
 
-    public SellLanguageAllReponse(LanguageEntity entity){
+    public SellLanguageAllResponse(LanguageEntity entity){
         this.language = entity.getLanguage();
         this.id = entity.getId();
     }

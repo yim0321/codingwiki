@@ -7,6 +7,7 @@ import com.aso.codingwiki.model.category.CategoryEntity;
 import com.aso.codingwiki.model.language.LanguageEntity;
 import com.aso.codingwiki.repository.CategoryRepository;
 import com.aso.codingwiki.repository.LanguageRepository;
+import com.aso.codingwiki.repository.PopularBoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +21,9 @@ public class CategoryService {
     private final CategoryRepository repository;
     private final LanguageRepository languageRepository;
 
-    public long insCategory(String category,long languageID) {
+    public List<CategoryEntity> insCategory(String category,long languageId) {
 
-        Optional<LanguageEntity> languageEntity_ = languageRepository.findById(languageID);
+        Optional<LanguageEntity> languageEntity_ = languageRepository.findById(languageId);
         if(!languageEntity_.isPresent()){
             throw new LanguageNotFoundException("없는 프로그래밍언어 입니다.");
         }
@@ -37,12 +38,16 @@ public class CategoryService {
                 category(category).
                 build();
         repository.save(categoryEntity);
-        return  categoryEntity.getId();
+        return sellCategoryInLanguage(languageId);
     }
 
 
     public List<CategoryEntity> sellCategoryInLanguage(long languageId) {
-        return repository.findByLanguageEntity(languageId);
+        Optional<LanguageEntity> languageEntity_ = languageRepository.findById(languageId);
+        if(!languageEntity_.isPresent()){
+            throw new LanguageNotFoundException("없는 언어 입니다.");
+        }
+        return repository.findByLanguageEntity(languageEntity_.get());
     }
 
     public CategoryEntity sellCategory(long categoryId) {

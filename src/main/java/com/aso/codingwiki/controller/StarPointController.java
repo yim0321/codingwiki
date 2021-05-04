@@ -1,5 +1,6 @@
 package com.aso.codingwiki.controller;
 
+import com.aso.codingwiki.model.user.UserEntity;
 import com.aso.codingwiki.service.StarPointService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +10,7 @@ import java.security.Principal;
 
 @RestController
 @RequiredArgsConstructor
-public class StatPointController {
+public class StarPointController {
 
     private final StarPointService service;
 
@@ -17,7 +18,7 @@ public class StatPointController {
      * create 업데이트랑 같은 로직임
      */
     @PostMapping("/starPoint")
-    public long insStarPoint(@RequestBody InsStarPointRequest insStarPointRequest, Principal principal){
+    public float insStarPoint(@RequestBody InsStarPointRequest insStarPointRequest, Principal principal){
 
         return service.updStarPoint(
                 insStarPointRequest.getStarPoint(),
@@ -33,8 +34,8 @@ public class StatPointController {
      * update 인설트랑 같은 로직임 하나 삭제해도 될지도
      */
     @PutMapping("/starPoint")
-    public long updStarPoint(@RequestBody InsStarPointRequest insStarPointRequest, Principal principal ){
-
+    public float updStarPoint(@RequestBody InsStarPointRequest insStarPointRequest, Principal principal ){
+        
         return service.updStarPoint(
                 insStarPointRequest.getStarPoint(),
                 insStarPointRequest.getBoardId(),

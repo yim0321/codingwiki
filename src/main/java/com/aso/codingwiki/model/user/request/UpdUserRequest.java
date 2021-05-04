@@ -9,7 +9,7 @@ import javax.validation.constraints.NotEmpty;
 public class UpdUserRequest {
 
     @NotEmpty
-    private long id;
+    private String userId;
     //@Pattern() 정규식 작성 요망
     @NotEmpty
     private String  oldPw;

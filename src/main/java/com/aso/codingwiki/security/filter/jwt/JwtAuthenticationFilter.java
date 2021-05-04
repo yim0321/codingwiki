@@ -53,18 +53,26 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult)
-            throws IOException, ServletException {
+    protected void successfulAuthentication(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain chain,
+            Authentication authResult) throws IOException, ServletException {
 
         PrincipalDetails principalDetailis = (PrincipalDetails) authResult.getPrincipal();
 
+        if(principalDetailis.getUser().getRoles().equals("Unauthenticated")){
+            response.getWriter().append("Unauthenticated:").append(principalDetailis.getUser().getUserEmail());
+        }
+        else {
 
-        String jwtToken = JWT.create()
-                .withSubject("jwtToken")
-                .withExpiresAt(new Date(System.currentTimeMillis()+600000))
-                .withClaim("userEmail", principalDetailis.getUser().getUserEmail())
-                .sign(Algorithm.HMAC512("codingwiki"));
-        //response.addHeader("Authorization", "Bearer "+jwtToken);
-        response.getWriter().append("Authorization:" ).append("Bearer "+jwtToken);
+            String jwtToken = JWT.create()
+                    .withSubject("jwtToken")
+                    .withExpiresAt(new Date(System.currentTimeMillis() + 600000))
+                    .withClaim("userEmail", principalDetailis.getUser().getUserEmail())
+                    .sign(Algorithm.HMAC512("codingwiki"));
+            //response.addHeader("Authorization", "Bearer "+jwtToken);
+            response.getWriter().append("Authorization:").append("Bearer " + jwtToken + "");
+        }
     }
 }

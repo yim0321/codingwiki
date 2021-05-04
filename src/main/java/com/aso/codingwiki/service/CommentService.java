@@ -23,7 +23,7 @@ public class CommentService {
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
 
-    public long insComment(CommentEntity commentEntity, long boardId, String userEmail) {
+    public CommentEntity insComment(CommentEntity commentEntity, long boardId, String userEmail) {
 
         Optional<BoardEntity> boardEntity_ = boardRepository.findById(boardId);
         Optional<UserEntity> userEntity_ = userRepository.findOpByUserEmail(userEmail);
@@ -38,7 +38,7 @@ public class CommentService {
         commentEntity.setCommentMap(boardEntity_.get(),userEntity_.get());
 
         repository.save(commentEntity);
-        return  commentEntity.getId();
+        return  commentEntity;
     }
 
     public List<CommentEntity> sellCommentBoard(long boardId) {

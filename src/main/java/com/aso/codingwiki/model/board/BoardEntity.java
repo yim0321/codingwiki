@@ -3,6 +3,7 @@ package com.aso.codingwiki.model.board;
 import com.aso.codingwiki.model.category.CategoryEntity;
 import com.aso.codingwiki.model.comment.CommentEntity;
 import com.aso.codingwiki.model.common.DateTime;
+import com.aso.codingwiki.model.user.UserEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,6 +32,10 @@ public class BoardEntity extends DateTime {
     private long views;//조회수
     private String uuid;//이미지 uuid
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private UserEntity userEntity;
+
     @Builder
     public BoardEntity(String boardTitle,String boardContents,String uuid){
         this.boardTitle = boardTitle;
@@ -44,6 +49,10 @@ public class BoardEntity extends DateTime {
         this.categoryEntity = categoryEntity;
     }
 
+    public void setUserEntity(UserEntity userEntity) {
+        this.userEntity = userEntity;
+    }
+
     public void changeEntity(BoardEntity newBoardEntity){
         this.uuid = newBoardEntity.getUuid();
         this.boardTitle = newBoardEntity.getBoardTitle();
@@ -51,8 +60,9 @@ public class BoardEntity extends DateTime {
     }
 
     public void addViews(){
-        this.views =+ 1;
+        this.views = this.views+1;
     }
+
 
     public void setAvgStarPoint(float avgStarPoint) {
         this.avgStarPoint = avgStarPoint;

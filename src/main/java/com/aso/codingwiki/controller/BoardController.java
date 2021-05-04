@@ -3,7 +3,9 @@ package com.aso.codingwiki.controller;
 
 import com.aso.codingwiki.model.board.BoardEntity;
 import com.aso.codingwiki.model.board.BoardResponse;
+import com.aso.codingwiki.model.category.CategoryEntity;
 import com.aso.codingwiki.service.BoardService;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +14,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,7 +30,7 @@ public class BoardController {
      * create
      */
     @PostMapping("/board")
-    public long insBoard(@RequestBody InsBoardRequest insBoardRequest){
+    public long insBoard(@RequestBody InsBoardRequest insBoardRequest, Principal principal){
 
         BoardEntity boardEntity =
                 BoardEntity.builder()
@@ -35,7 +39,7 @@ public class BoardController {
                         .uuid(insBoardRequest.uuid)
                         .build();
 
-        return service.insBoard(boardEntity,insBoardRequest.categoryId,insBoardRequest.uuid);
+        return service.insBoard(boardEntity,insBoardRequest.categoryId,insBoardRequest.uuid,principal);
     }
 
     /**
@@ -70,11 +74,22 @@ public class BoardController {
         return service.sellBoardOne(boardId);
     }
 
+    @GetMapping("/board/category/{categoryId}")
+    public List<BoardResponseB> sellBoardCategory(@PathVariable(name = "categoryId") long categoryId){
+        return service.sellBoardCategory(categoryId).stream().map(boardEntity -> BoardResponseB.builder()
+                .boardEntity(boardEntity)
+                .build()).collect(Collectors.toList());
+    }
+
     //별점을 통한 최상위 글만 가져오기
     @GetMapping("/board/popular/{languageId}")
-    public BoardResponse sellPopularBoard(@PathVariable(name = "languageId") long languageId){
-        service.sellPopularBoard(languageId);
-        return null;
+    public List<BoardResponseA> sellPopularBoard(@PathVariable(name = "languageId") long languageId){
+        return  service.sellPopularBoard(languageId).stream().map(boardEntity -> BoardResponseA
+                .builder()
+                .boardEntity(boardEntity)
+                .build())
+                .collect(Collectors.toList());
+
     }
 
 
@@ -123,6 +138,53 @@ public class BoardController {
         private String boardTitle;
         private String boardContents;
         private String uuid;
+
+    }
+    @Getter
+    @NoArgsConstructor
+    static class BoardResponseA{
+
+        private long id;
+        private String boardContents;
+        private String category;
+
+        @Builder
+        public BoardResponseA(BoardEntity boardEntity){
+            this.id = boardEntity.getId();
+            this.boardContents = boardEntity.getBoardContents();
+            this.category = boardEntity.getCategoryEntity().getCategory();
+        }
+
+    }
+
+    @Getter
+    @NoArgsConstructor
+    static class BoardResponseB{
+
+        private long id;
+        private String title;
+        private String contents;
+        private String witter;
+        private long views;
+        private float avgStarPoint;
+        private String userName;
+        private LocalDateTime createDate;
+        private LocalDateTime lastModifiedDate;
+
+
+
+        @Builder
+        public BoardResponseB(BoardEntity boardEntity){
+            this.id = boardEntity.getId();
+            this.title = boardEntity.getBoardTitle();
+            this.contents = boardEntity.getBoardContents();
+            this.views = boardEntity.getViews();
+            this.avgStarPoint = boardEntity.getAvgStarPoint();
+            this.createDate = boardEntity.getCreatedDate();
+            this.lastModifiedDate = boardEntity.getLastModifiedDate();
+
+
+        }
 
     }
 

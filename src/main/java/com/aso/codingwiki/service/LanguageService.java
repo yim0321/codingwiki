@@ -4,7 +4,7 @@ package com.aso.codingwiki.service;
 import com.aso.codingwiki.exception.LanguageNotFoundException;
 import com.aso.codingwiki.exception.OverlapLanguageException;
 import com.aso.codingwiki.model.language.LanguageEntity;
-import com.aso.codingwiki.model.language.SellLanguageAllReponse;
+import com.aso.codingwiki.model.language.SellLanguageAllResponse;
 import com.aso.codingwiki.repository.LanguageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class LanguageService {
     private final LanguageRepository repository;
 
 
-    public long insLanguage(String language) {
+    public List<LanguageEntity> insLanguage(String language) {
 
         Optional<LanguageEntity> languageEntity_ = repository.findByLanguage(language);
         if(languageEntity_.isPresent()){
@@ -33,7 +33,9 @@ public class LanguageService {
                 language(language).
                 build();
         repository.save(languageEntity);
-        return languageEntity.getId();
+
+        return sellLanguageAll();
+
     }
 
     public List<LanguageEntity> sellLanguageAll() {

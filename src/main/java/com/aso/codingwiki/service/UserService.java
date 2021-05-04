@@ -38,7 +38,7 @@ public class UserService {
 
     public long updUser(UpdUserRequest updUserRequest) {
 
-        Optional<UserEntity> userEntity_ = repository.findById(updUserRequest.getId());
+        Optional<UserEntity> userEntity_ = repository.findOpByUserEmail(updUserRequest.getUserId());
         if(!userEntity_.isPresent()){
             throw new UsernameNotFoundException("사용자를 찾을수 없습니다.");
         }
@@ -65,4 +65,19 @@ public class UserService {
     }
 
 
+    public UserEntity sellUser(String name) {
+        Optional<UserEntity> userEntity_ = repository.findOpByUserEmail(name);
+        if(!userEntity_.isPresent()){
+            throw new UsernameNotFoundException("없는 유저 입니다.");
+        }
+        return userEntity_.get();
+    }
+
+    public boolean idCheck(String userId) {
+        Optional<UserEntity> userEntity_ = repository.findOpByUserEmail(userId);
+        if(userEntity_.isPresent()){
+            return false;
+        }
+        return true;
+    }
 }

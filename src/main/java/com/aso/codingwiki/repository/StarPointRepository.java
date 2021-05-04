@@ -18,6 +18,4 @@ public interface StarPointRepository extends JpaRepository<StarPointEntity,Long>
     @Query("select avg(s.starPoint) from StarPointEntity as s where s.boardEntity = :boardEntity")
     float starPointAvg(@Param("boardEntity") BoardEntity boardEntity);
 
-
-
 }

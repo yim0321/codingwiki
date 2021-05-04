@@ -20,35 +20,18 @@ public class CategoryController {
      * create
      */
     @PostMapping("/category")
-    public long insCategory(@RequestBody InsCategoryRequest insCategoryRequest){
+    public List<CategoryResponse> insCategory(@RequestBody InsCategoryRequest insCategoryRequest){
 
-        return service.insCategory(insCategoryRequest.getCategory(),insCategoryRequest.getLanguageID());
+        List<CategoryEntity> entityList = service.insCategory(insCategoryRequest.getCategory(),insCategoryRequest.getLanguageId());
+        return entityList
+                .stream()
+                .map((categoryEntity)->new CategoryResponse(categoryEntity))
+                .collect(Collectors.toList());
     }
 
-
-
-    //두개 분리해서 작성하기
-//    @GetMapping("/category/{languageID}/{categoryId}")
-//    public List<CategoryResponse> sellCategoryLanguage(
-//            @PathVariable(name = "languageID") long languageId,
-//            @PathVariable(name = "categoryId") long categoryId){
-//
-//        List<CategoryEntity> entityList;
-//
-//        if(categoryId == 0){
-//            entityList  = service.sellCategoryInLanguage(languageId);
-//        }
-//        else {
-//            entityList = service.sellCategory(categoryId);
-//        }
-//        return entityList
-//                .stream()
-//                .map((categoryEntity)->new CategoryResponse(categoryEntity))
-//                .collect(Collectors.toList());
-//    }
-    @GetMapping("/category/languageID/{languageID}")
+    @GetMapping("/category/languageId/{languageId}")
     public List<CategoryResponse> sellCategoryInLanguage(
-            @PathVariable(name = "languageID") long languageId){
+            @PathVariable(name = "languageId") long languageId){
         List<CategoryEntity> entityList  = service.sellCategoryInLanguage(languageId);
         return entityList
                 .stream()
@@ -87,7 +70,7 @@ public class CategoryController {
     static class InsCategoryRequest{
 
         private String category;
-        private long languageID;
+        private long languageId;
 
     }
     /**
